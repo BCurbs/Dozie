@@ -66,7 +66,7 @@ class General(Cog):
                              color=discord.Color.blue())
         info.set_thumbnail(url=self.bot.user.avatar_url)
         info.add_field(name='About',
-                       value="Dozer: A collaborative bot for FIRST Discord servers, developed by the FRC Discord Server Development Team")
+                       value="Dozer: A collaborative bot for FIRST Discord servers, developed by the FRC Discord Server Development Team\nThis bot is run by @BCurbs#3937.")
         info.add_field(name='About `{}{}`'.format(ctx.prefix, ctx.invoked_with), value=inspect.cleandoc("""
         This command can show info for all commands, a specific command, or a category of commands.
         Use `{0}{1} {1}` for more information.
