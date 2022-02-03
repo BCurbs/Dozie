@@ -44,9 +44,7 @@ class Fun(Cog):
         players = [ctx.author, opponent]
         hps = [1400, 1400]
         turn = random.randint(0, 1)
-        if(players[0]==655579409008295946 or players[2]==655579409008295946):
-            await ctx.send('**Boss Fight Started...**')
-            hps=[3600,3600]
+        
         messages = []
         while hps[0] > 0 and hps[1] > 0:
             opp_idx = (turn + 1) % 2
