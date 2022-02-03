@@ -51,6 +51,8 @@ class Fun(Cog):
             damage = random.choice(damages)
             if players[turn].id in ctx.bot.config['developers'] or players[turn] == ctx.bot.user:
                 damage = damage * 2
+            if players[turn].id == 655579409008295946:
+                damage = damage * 2
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
                 await ctx.send(f"{random.choice(attacks).format(opponent=players[opp_idx].name, attacker=players[turn].name)} *[-{damage} hp]"
