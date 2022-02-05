@@ -39,6 +39,7 @@ class Fun(Cog):
             "**{opponent}** was knocked off the hab by **{attacker}**",
             "**{opponent}** had the scale dropped on them by **{attacker}**",
             "**{opponent}** had `git rm --force` executed on them by **{attacker}**",
+            "**{opponent}** was blamed for breaking the robot by **{attacker}**",
         ]
 
         damages = [100, 150, 200, 300, 50, 250, 420]
