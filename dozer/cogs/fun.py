@@ -6,6 +6,7 @@ from asyncio import sleep
 import discord
 from discord.ext.commands import cooldown, BucketType, guild_only, BadArgument, MissingPermissions
 from discord_slash import cog_ext, SlashContext
+from sqlalchemy import false, true
 
 from ._utils import *
 from .general import blurple
@@ -42,7 +43,15 @@ class Fun(Cog):
 
         damages = [100, 150, 200, 300, 50, 250, 420]
         players = [ctx.author, opponent]
-        hps = [1400, 1400]
+        bossfight = False
+        if(ctx.author.id in ctx.bot.config['developers'] or opponent in ctx.bot.config['developers']):
+            await ctx.send('Boss Fight started')
+            bossfight= True
+            hps = [14000, 14000]
+        else:
+            hps = [1400, 1400]
+        
+        
         turn = random.randint(0, 1)
         
         messages = []
@@ -53,6 +62,8 @@ class Fun(Cog):
                 damage = damage * 2
             if players[turn].id == 655579409008295946:
                 damage = damage * 2
+            if(bossfight):
+                damage = damage*6
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
                 await ctx.send(f"{random.choice(attacks).format(opponent=players[opp_idx].name, attacker=players[turn].name)} *[-{damage} hp]"
