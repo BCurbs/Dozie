@@ -45,7 +45,7 @@ class Fun(Cog):
         damages = [100, 150, 200, 300, 50, 250, 420]
         players = [ctx.author, opponent]
         bossfight = False
-        if(ctx.author.id in ctx.bot.config['developers'] or opponent in ctx.bot.config['developers']):
+        if(ctx.author.id in ctx.bot.config['developers'] or opponent.id in ctx.bot.config['developers']):
             await ctx.send('**Boss Fight started**')
             bossfight= True
             hps = [140000, 140000]
