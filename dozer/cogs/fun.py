@@ -40,7 +40,7 @@ class Fun(Cog):
             "**{opponent}** had the scale dropped on them by **{attacker}**",
             "**{opponent}** had `git rm --force` executed on them by **{attacker}**",
             "**{opponent}** was blamed for breaking the robot by **{attacker}**",
-            "**{opponent}** had their battery fall out out thanks to **{attacker}**",
+            "**{opponent}** had their battery fall out out thanks to **{attacker}**",# this and the following messages are thanks to J-Man from the CHS discord server, who expended their creative powers on these statements. 
             "**{opponent}** extended too far outside their frame perimeter in front of **{attacker}**",
             "**{opponent}** lost a coffee-drinking competition against **{attacker}**",
             "**{opponent}** was a no-show against **{attacker}**",
