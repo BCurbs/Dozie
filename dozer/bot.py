@@ -111,6 +111,7 @@ class Dozer(commands.Bot):
             pass  # Silent ignore
         else:
             await context.send('```\n%s\n```' % ''.join(traceback.format_exception_only(type(exception), exception)).strip())
+            print(exception)
             if isinstance(context.channel, discord.TextChannel):
                 DOZER_LOGGER.error('Error in command <%d> (%d.name!r(%d.id) %d(%d.id) %d(%d.id) %d)',
                                    context.command, context.guild, context.guild, context.channel, context.channel,
