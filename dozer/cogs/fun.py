@@ -48,7 +48,7 @@ class Fun(Cog):
         if(ctx.author.id in ctx.bot.config['developers'] or opponent.id in ctx.bot.config['developers']):
             await ctx.send('**Boss Fight started**')
             bossfight= True
-            hps = [140000, 140000]
+            hps = [1400000, 1400000]
         else:
             hps = [1400, 1400]
         
@@ -64,7 +64,7 @@ class Fun(Cog):
             if players[turn].id == 655579409008295946:
                 damage = damage * 2
             if(bossfight):
-                damage = damage*60
+                damage = damage*600
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
                 await ctx.send(f"{random.choice(attacks).format(opponent=players[opp_idx].name, attacker=players[turn].name)} *[-{damage} hp]"
