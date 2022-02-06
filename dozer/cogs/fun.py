@@ -64,7 +64,7 @@ class Fun(Cog):
             if players[turn].id == 655579409008295946:
                 damage =int( damage * 2.2)
             if(bossfight):
-                damage = damage*600
+                damage = int(damage*623.4)
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
                 await ctx.send(f"{random.choice(attacks).format(opponent=players[opp_idx].name, attacker=players[turn].name)} *[-{damage} hp]"
