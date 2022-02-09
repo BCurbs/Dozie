@@ -39,7 +39,13 @@ class Fun(Cog):
             "**{opponent}** was knocked off the hab by **{attacker}**",
             "**{opponent}** had the scale dropped on them by **{attacker}**",
             "**{opponent}** had `git rm --force` executed on them by **{attacker}**",
-            "**{opponent}** was blamed for breaking the robot by **{attacker}**",
+            "**{opponent}** was blamed for breaking the robot by **{attacker}**",# this and the following messages up to the next comment are custom by @BCurbs#3937
+            "**{opponent}** had their autonomous broken by **{attacker}**",
+            "**{opponent}** was voted out by **{attacker}**",
+            "**{opponent}** was called sus by **{attacker}**",
+            "**{opponent}** was hit with a power cell by **{attacker}**",
+            "**{opponent}** had their main breaker pressed by **{attacker}**",
+            "**{opponent}** had a conflicting autonomous with **{attacker}**",
             "**{opponent}** had their battery fall out out thanks to **{attacker}**",# this and the following messages are thanks to J-Man from the CHS discord server, who expended their creative powers on these statements. 
             "**{opponent}** extended too far outside their frame perimeter in front of **{attacker}**",
             "**{opponent}** lost a coffee-drinking competition against **{attacker}**",
