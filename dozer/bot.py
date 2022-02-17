@@ -144,8 +144,8 @@ class Dozer(commands.Bot):
 
     def global_checks(self, ctx):
         """Checks that should be executed before passed to the command"""
-        if ctx.author.bot:
-            raise InvalidContext('Bots cannot run commands!')
+        # if ctx.author.bot:
+        #     raise InvalidContext('Bots cannot run commands!')
         retry_after = self._global_cooldown.update_rate_limit()
         if retry_after and not hasattr(ctx, "is_pseudo"): # bypass ratelimit for su'ed commands
             raise InvalidContext('Global rate-limit exceeded!')

@@ -46,6 +46,7 @@ class Fun(Cog):
             "**{opponent}** was hit with a power cell by **{attacker}**",
             "**{opponent}** had their main breaker pressed by **{attacker}**",
             "**{opponent}** had a conflicting autonomous with **{attacker}**",
+            "**{opponent}** was hit with a stapler by **{attacker}**",
             "**{opponent}** had their battery fall out out thanks to **{attacker}**",# this and the following messages are thanks to J-Man from the CHS discord server, who expended their creative powers on these statements. 
             "**{opponent}** extended too far outside their frame perimeter in front of **{attacker}**",
             "**{opponent}** lost a coffee-drinking competition against **{attacker}**",
@@ -66,7 +67,7 @@ class Fun(Cog):
             "**{opponent}** was given a tech foul by **{attacker}**",
             "**{opponent}** had their code corrupted by **{attacker}**",
             "**{opponent}** was found without adequate eye protection by **{attacker}**",
-            "**{opponent}** was hit with a stapler by **{attacker}**",
+            
         ]
 
         damages = [100, 150, 200, 300, 50, 250, 420]
