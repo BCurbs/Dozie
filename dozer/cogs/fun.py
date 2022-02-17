@@ -66,6 +66,7 @@ class Fun(Cog):
             "**{opponent}** was given a tech foul by **{attacker}**",
             "**{opponent}** had their code corrupted by **{attacker}**",
             "**{opponent}** was found without adequate eye protection by **{attacker}**",
+            "**{opponent}** was hit with a stapler by **{attacker}**",
         ]
 
         damages = [100, 150, 200, 300, 50, 250, 420]
