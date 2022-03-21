@@ -39,7 +39,8 @@ class Fun(Cog):
             "**{opponent}** was knocked off the hab by **{attacker}**",
             "**{opponent}** had the scale dropped on them by **{attacker}**",
             "**{opponent}** had `git rm --force` executed on them by **{attacker}**",
-            "**{opponent}** was blamed for breaking the robot by **{attacker}**",# this and the following messages up to the next comment are custom by @BCurbs#3937
+            "**{opponent}** was blamed for breaking the robot by **{attacker}**",
+            # this and the following messages up to the next comment are custom by @BCurbs#3937
             "**{opponent}** had their autonomous broken by **{attacker}**",
             "**{opponent}** was voted out by **{attacker}**",
             "**{opponent}** was called sus by **{attacker}**",
@@ -48,7 +49,8 @@ class Fun(Cog):
             "**{opponent}** had a conflicting autonomous with **{attacker}**",
             "**{opponent}** was hit with a stapler by **{attacker}**",
             "**{opponent}** was knocked off the traversal bar by **{attacker}**",
-            "**{opponent}** had their battery fall out out thanks to **{attacker}**",# this and the following messages are thanks to J-Man from the CHS discord server, who expended their creative powers on these statements. 
+            "**{opponent}** had their battery fall out out thanks to **{attacker}**",
+            # this and the following messages are thanks to J-Man from the CHS discord server, who expended their creative powers on these statements.
             "**{opponent}** extended too far outside their frame perimeter in front of **{attacker}**",
             "**{opponent}** lost a coffee-drinking competition against **{attacker}**",
             "**{opponent}** was a no-show against **{attacker}**",
@@ -68,22 +70,21 @@ class Fun(Cog):
             "**{opponent}** was given a tech foul by **{attacker}**",
             "**{opponent}** had their code corrupted by **{attacker}**",
             "**{opponent}** was found without adequate eye protection by **{attacker}**",
-            
+
         ]
 
         damages = [100, 150, 200, 300, 50, 250, 420]
         players = [ctx.author, opponent]
         bossfight = False
-        if(ctx.author.id in ctx.bot.config['developers'] or opponent.id in ctx.bot.config['developers']) or ctx.bot.user.id == opponent.id:
+        if (ctx.author.id in ctx.bot.config['developers'] or opponent.id in ctx.bot.config['developers']) or ctx.bot.user.id == opponent.id:
             await ctx.send('**Boss Fight started**')
-            bossfight= True
+            bossfight = True
             hps = [1400000, 1400000]
         else:
             hps = [1400, 1400]
-        
-        
+
         turn = random.randint(0, 1)
-        
+
         messages = []
         while hps[0] > 0 and hps[1] > 0:
             opp_idx = (turn + 1) % 2
@@ -91,16 +92,18 @@ class Fun(Cog):
             if players[turn].id in ctx.bot.config['developers'] or players[turn] == ctx.bot.user:
                 damage = damage * 2
             if players[turn].id == 655579409008295946:
-                damage =int( damage * 2.2)
-            if(bossfight):
-                damage = int(damage*623.4)
+                damage = int(damage * 2.2)
+            if bossfight:
+                damage = int(damage * 623.4)
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
-                await ctx.send(f"{random.choice(attacks).format(opponent=players[opp_idx].name, attacker=players[turn].name)} *[-{damage} hp]"
-                               f" [{hps[opp_idx]} HP remaining]*"))
+                await ctx.send(
+                    f"{random.choice(attacks).format(opponent=players[opp_idx].name, attacker=players[turn].name)} *[-{damage} hp]"
+                    f" [{hps[opp_idx]} HP remaining]*"))
             await sleep(1.5)
             turn = opp_idx
-        win_embed = discord.Embed(description=f"{players[turn].mention} lost! GG {players[(turn + 1) % 2].mention}!", color=blurple)
+        win_embed = discord.Embed(description=f"{players[turn].mention} lost! GG {players[(turn + 1) % 2].mention}!",
+                                  color=blurple)
         win_msg = await ctx.send(embed=win_embed)
         await sleep(5)
         if delete_result:
@@ -156,8 +159,9 @@ class Fun(Cog):
         if opponent_levels.total_xp < wager:
             raise BadArgument(f"{opponent} does not have enough XP to fulfill the wager")
 
-        embed = discord.Embed(description=f"{ctx.author.mention} has challenged {opponent.mention} to a fight with a wager of"
-                                          f" {wager}xp")
+        embed = discord.Embed(
+            description=f"{ctx.author.mention} has challenged {opponent.mention} to a fight with a wager of"
+                        f" {wager}xp")
         embed.set_footer(text=f"{opponent.display_name} react to the ✅ to agree to the fight")
         embed.set_author(name=f"{ctx.author.display_name} vs {opponent.display_name}")
 

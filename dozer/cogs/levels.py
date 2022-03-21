@@ -199,10 +199,11 @@ class Levels(Cog):
         # Query written manually to insert all records at once
         try:
             async with db.Pool.acquire() as conn:
-                await conn.executemany(f"INSERT INTO {MemberXP.__tablename__} (guild_id, user_id, total_xp, total_messages, last_given_at)"
+                await conn.executemany(f"INSERT INTO {MemberXP.__tablename__} "
+                                       f"(guild_id, user_id, total_xp, total_messages, last_given_at)"
                                        f" VALUES ($1, $2, $3, $4, $5) ON CONFLICT ({MemberXP.__uniques__}) DO UPDATE"
-                                       f" SET total_xp = EXCLUDED.total_xp, total_messages = EXCLUDED.total_messages, last_given_at = "
-                                       f"EXCLUDED.last_given_at",
+                                       f" SET total_xp = EXCLUDED.total_xp, total_messages = EXCLUDED.total_messages, "
+                                       f"last_given_at = EXCLUDED.last_given_at",
                                        to_write)
             DOZER_LOGGER.debug(f"Inserted/updated {len(to_write)} record(s); Evicted {evicted} records(s)")
         except Exception as e:
