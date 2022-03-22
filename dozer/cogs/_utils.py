@@ -159,7 +159,7 @@ class Reactor:
         for emoji in reversed(self._reactions):
             try:
                 await self.message.remove_reaction(emoji, self.me)
-            except commands.CommandInvokeError:
+            except commands.MessageNotFound:
                 DOZER_LOGGER.debug("Failed to remove reaction from paginator. Does the messages still exist?")
 
     def do(self, action):
