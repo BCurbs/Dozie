@@ -260,7 +260,8 @@ class TBA(Cog):
         if td.country == "USA":
             td.country = "United States of America"
             units = 'u'
-        url = "https://wttr.in/{}".format(urlquote("{}+{}+{}_0_{}.png".format(td.city, td.state_prov, td.country, units)))
+        url = "https://wttr.in/{}".format(
+            urlquote("{}+{}+{}_0_{}.png".format(td.city, td.state_prov, td.country, units)))
 
         if isinstance(ctx, SlashContext):
             async with self.http_session.get(url) as resp:
@@ -333,7 +334,8 @@ class TBA(Cog):
 
         current_time = datetime.datetime.utcnow() + datetime.timedelta(hours=utc_offset)
 
-        await ctx.send("Timezone: {} UTC{}\n{}".format(tzname, utc_offset, current_time.strftime("Current Time: %I:%M:%S %p (%H:%M:%S)")))
+        await ctx.send("Timezone: {} UTC{}\n{}".format(tzname, utc_offset,
+                                                       current_time.strftime("Current Time: %I:%M:%S %p (%H:%M:%S)")))
 
     timezone.example_usage = """
     `{prefix}timezone frc 5052` - show the local time of FRC team 5052, The RoboLobos

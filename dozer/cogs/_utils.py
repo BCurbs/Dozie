@@ -143,7 +143,8 @@ class Reactor:
             await self.message.add_reaction(emoji)
         while True:
             try:
-                reaction, reacting_member = await self.bot.wait_for('reaction_add', check=self._check_reaction, timeout=self.timeout)
+                reaction, reacting_member = await self.bot.wait_for('reaction_add', check=self._check_reaction,
+                                                                    timeout=self.timeout)
             except asyncio.TimeoutError:
                 break
 
@@ -158,7 +159,10 @@ class Reactor:
             else:
                 await self._action
         for emoji in reversed(self._reactions):
-            await self.message.remove_reaction(emoji, self.me)
+            try:
+                await self.message.remove_reaction(emoji, self.me)
+            except discord.errors.NotFound:
+                DOZER_LOGGER.debug("Failed to remove reaction from paginator. Does the messages still exist?")
 
     def do(self, action):
         """If there's an action reaction, do the action."""
