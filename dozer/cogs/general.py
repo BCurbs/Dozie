@@ -14,7 +14,7 @@ class General(Cog):
     """General commands common to all Discord bots."""
 
     @command()
-    async def ping(self, ctx):
+    async def ping(self, ctx: discord.ext.commands.Context):
         """Check the bot is online, and calculate its response time."""
         if ctx.guild is None:
             location = 'DMs'
