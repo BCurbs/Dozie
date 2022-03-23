@@ -4,7 +4,7 @@ import inspect
 import logging
 import typing
 from collections.abc import Mapping
-
+from typing import Dict
 import discord
 from discord.ext import commands
 
@@ -172,7 +172,7 @@ class Reactor:
         """Listener for stop reactions."""
         self._action = self._stop_reaction
 
-    def _check_reaction(self, reaction, member: discord.Member):
+    def _check_reaction(self, reaction: discord.Reaction, member: discord.Member):
         return reaction.message.id == self.message.id and member.id == self.caller.id
 
 
@@ -241,7 +241,8 @@ class Paginator(Reactor):
             if page < 0:
                 page += self.len_pages
         self.page = page
-        self.do(self.message.edit(embed=self.pages[self.page]))
+        if self.message is not None:
+            self.do(self.message.edit(embed=self.pages[self.page]))
 
     def next(self, amt: int=1):
         """Goes to the next help page"""
@@ -291,7 +292,7 @@ def bot_has_permissions(**required):
         else:
             return True
 
-    def decorator(func: function):
+    def decorator(func):
         """Defines the bot_has_permissions decorator"""
         if isinstance(func, Command):
             func.checks.append(predicate)
@@ -313,9 +314,9 @@ class PrefixHandler:
 
     def __init__(self, default_prefix: str):
         self.default_prefix = default_prefix
-        self.prefix_cache = {}
+        self.prefix_cache: Dict[int, DynamicPrefixEntry] = {}
 
-    def handler(self, bot, message: discord.message):
+    def handler(self, bot, message: discord.Message):
         """Process the dynamic prefix for each message"""
         dynamic = self.prefix_cache.get(message.guild.id) if message.guild else self.default_prefix
         # <@!> is a nickname mention which discord.py doesn't make by default
@@ -332,7 +333,7 @@ class PrefixHandler:
 class DynamicPrefixEntry(db.DatabaseTable):
     """Holds the custom prefixes for guilds"""
     __tablename__ = 'dynamic_prefixes'
-    __uniques__ = 'guild_id'
+    __uniques__ = ['guild_id']
 
     @classmethod
     async def initial_create(cls):
