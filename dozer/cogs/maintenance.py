@@ -6,6 +6,7 @@ import sys
 from discord.ext.commands import NotOwner
 
 from dozer.bot import DOZER_LOGGER
+from dozer.context import DozerContext
 from ._utils import *
 
 
@@ -15,13 +16,13 @@ class Maintenance(Cog):
     These commands are restricted to bot developers.
     """
 
-    def cog_check(self, ctx):  # All of this cog is only available to devs
+    def cog_check(self, ctx: DozerContext):  # All of this cog is only available to devs
         if ctx.author.id not in ctx.bot.config['developers']:
             raise NotOwner('you are not a developer!')
         return True
 
     @command()
-    async def shutdown(self, ctx):
+    async def shutdown(self, ctx: DozerContext):
         """Force-stops the bot."""
         await ctx.send('Shutting down')
         DOZER_LOGGER.info('Shutting down at request of {}#{} (in {}, #{})'.format(ctx.author.name,
@@ -35,7 +36,7 @@ class Maintenance(Cog):
     """
 
     @command()
-    async def restart(self, ctx):
+    async def restart(self, ctx: DozerContext):
         """Restarts the bot."""
         await ctx.send('Restarting')
         await self.bot.shutdown(restart=True)
@@ -45,7 +46,7 @@ class Maintenance(Cog):
     """
 
     @command()
-    async def update(self, ctx):
+    async def update(self, ctx: DozerContext):
         """
         Pulls code from GitHub and restarts.
         This pulls from whatever repository `origin` is linked to.
@@ -56,7 +57,7 @@ class Maintenance(Cog):
             await ctx.send('```\n' + res + '```')
         else:
             await ctx.send('```\n' + res + '```')
-            await ctx.bot.get_command('restart').callback(self, ctx)
+            await ctx.bot.get_command('restart').callback(self, ctx: DozerContext)
 
     update.example_usage = """
     `{prefix}update` - update to the latest commit and restart
