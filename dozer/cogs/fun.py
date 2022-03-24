@@ -93,8 +93,8 @@ class Fun(Cog):
             damage = random.choice(damages)
             if players[turn].id in ctx.bot.config['developers'] or players[turn] == ctx.bot.user:
                 damage = damage * 2
-            if players[turn].id == 655579409008295946:
-                damage = int(damage * 2.2)
+
+
             if bossfight:
                 damage = int(damage * 623.4)
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
