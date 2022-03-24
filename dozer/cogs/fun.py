@@ -96,7 +96,7 @@ class Fun(Cog):
 
 
             if bossfight:
-                damage = int(damage * 623.4)
+                damage = int(damage * 620)
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
                 await ctx.send(
