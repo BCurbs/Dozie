@@ -1,8 +1,6 @@
 """Maintenance commands for bot developers"""
 
 import os
-import sys
-
 from discord.ext.commands import NotOwner
 
 from dozer.bot import DOZER_LOGGER

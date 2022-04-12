@@ -2,12 +2,11 @@
 import asyncio
 import time
 import typing
-
 import discord
 import discord.utils
+from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, has_permissions, BadArgument, guild_only
 from discord_slash import cog_ext, SlashContext
-from discord.ext import commands
 
 from dozer.context import DozerContext
 from ._utils import *
@@ -40,7 +39,8 @@ class Roles(Cog):
         return time_release
 
     @staticmethod
-    async def safe_message_fetch(ctx: DozerContext, menu=None, channel: discord.TextChannel=None, message_id: int=None):
+    async def safe_message_fetch(ctx: DozerContext, menu=None, channel: discord.TextChannel = None,
+                                 message_id: int = None):
         """Used to safely get a message and raise an error message cannot be found"""
         try:
             if menu:
@@ -672,7 +672,8 @@ class Roles(Cog):
     @bot_has_permissions(manage_roles=True, embed_links=True)
     @has_permissions(manage_roles=True)
     @guild_only()
-    async def addrole(self, ctx: DozerContext, channel: typing.Optional[discord.TextChannel], message_id: int, role: discord.Role,
+    async def addrole(self, ctx: DozerContext, channel: typing.Optional[discord.TextChannel], message_id: int,
+                      role: discord.Role,
                       emoji: typing.Union[discord.Emoji, str]):
         """Adds a reaction role to a message or a role menu"""
         if isinstance(emoji, discord.Emoji) and emoji.guild_id != ctx.guild.id:
@@ -728,7 +729,8 @@ class Roles(Cog):
     @bot_has_permissions(manage_roles=True, embed_links=True)
     @has_permissions(manage_roles=True)
     @guild_only()
-    async def delrole(self, ctx: DozerContext, channel: typing.Optional[discord.TextChannel], message_id: int, role: discord.Role):
+    async def delrole(self, ctx: DozerContext, channel: typing.Optional[discord.TextChannel], message_id: int,
+                      role: discord.Role):
         """Removes a reaction role from a message or a role menu"""
 
         menu_return = await RoleMenu.get_by(guild_id=ctx.guild.id, message_id=message_id)
@@ -927,7 +929,7 @@ class TempRoleTimerRecords(db.DatabaseTable):
             removal_ts bigint NOT NULL
             )""")
 
-    def __init__(self, guild_id: int, target_id: int, target_role_id: int, removal_ts: int, input_id: int=None):
+    def __init__(self, guild_id: int, target_id: int, target_role_id: int, removal_ts: int, input_id: int = None):
         super().__init__()
         self.id = input_id
         self.guild_id = guild_id

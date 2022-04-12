@@ -29,7 +29,8 @@ async def db_migrate():
         WHERE
         table_name = $1)""", cls.__tablename__)
         if exists['exists']:
-            version = await Pool.fetchrow("""SELECT version_num FROM versions WHERE table_name = $1""", cls.__tablename__)
+            version = await Pool.fetchrow("""SELECT version_num FROM versions WHERE table_name = $1""",
+                                          cls.__tablename__)
             if version is None:
                 # Migration/creation required, go to the function in the subclass for it
                 await cls.initial_migrate()
@@ -42,7 +43,8 @@ async def db_migrate():
                     await cls.__versions__[i](cls)
                     DOZER_LOGGER.info(f"Successfully updated table {cls.__tablename__} from version {i} to {i + 1}")
                 async with Pool.acquire() as conn:
-                    await conn.execute("""UPDATE versions SET version_num = $1 WHERE table_name = $2""", len(cls.__versions__), cls.__tablename__)
+                    await conn.execute("""UPDATE versions SET version_num = $1 WHERE table_name = $2""",
+                                       len(cls.__versions__), cls.__tablename__)
         else:
             await cls.initial_create()
             await cls.initial_migrate()
@@ -90,7 +92,7 @@ class DatabaseTable:
                 # Skip updating anything that has a unique constraint on it
                 continue
             updates += f"{key} = EXCLUDED.{key}"
-            if keys.index(key) == len(keys)-1:
+            if keys.index(key) == len(keys) - 1:
                 updates += " ;"
             else:
                 updates += ", \n"
@@ -98,7 +100,7 @@ class DatabaseTable:
             if updates:
                 statement = f"""
                 INSERT INTO {self.__tablename__} ({", ".join(keys)})
-                VALUES({','.join(f'${i+1}' for i in range(len(values)))})
+                VALUES({','.join(f'${i + 1}' for i in range(len(values)))})
                 ON CONFLICT ({self.__uniques__}) DO UPDATE
                 SET {updates}
                 """
@@ -158,6 +160,7 @@ class DatabaseTable:
 
 class ConfigCache:
     """Class that will reduce calls to sqlalchemy as much as possible. Has no growth limit (yet)"""
+
     def __init__(self, table):
         self.cache = {}
         self.table = table
@@ -192,6 +195,6 @@ class ConfigCache:
         if query_hash in self.cache:
             del self.cache[query_hash]
 
-    __versions__: Dict[str,int] = {}
+    __versions__: Dict[str, int] = {}
 
     __uniques__: List[str] = []

@@ -4,9 +4,7 @@ import random
 from asyncio import sleep
 
 import discord
-from discord.ext.commands import cooldown, BucketType, guild_only, BadArgument, MissingPermissions
-from discord_slash import cog_ext, SlashContext
-from sqlalchemy import false, true
+from discord.ext.commands import BucketType, guild_only, BadArgument, MissingPermissions
 
 from dozer.context import DozerContext
 
@@ -17,7 +15,7 @@ from .general import blurple
 class Fun(Cog):
     """Fun commands"""
 
-    async def battle(self, ctx: DozerContext, opponent: discord.Member, delete_result: bool=True):
+    async def battle(self, ctx: DozerContext, opponent: discord.Member, delete_result: bool = True):
         """Start a fight with another user."""
         attacks = [
             "**{opponent}** was hit on the head by **{attacker}** ",
@@ -78,7 +76,8 @@ class Fun(Cog):
         damages = [100, 150, 200, 300, 50, 250, 420]
         players = [ctx.author, opponent]
         bossfight = False
-        if (ctx.author.id in ctx.bot.config['developers'] or opponent.id in ctx.bot.config['developers']) or ctx.bot.user.id == opponent.id:
+        if (ctx.author.id in ctx.bot.config['developers'] or opponent.id in ctx.bot.config[
+                'developers']) or ctx.bot.user.id == opponent.id:
             await ctx.send('**Boss Fight started**')
             bossfight = True
             hps = [1400000, 1400000]
@@ -93,7 +92,6 @@ class Fun(Cog):
             damage = random.choice(damages)
             if players[turn].id in ctx.bot.config['developers'] or players[turn] == ctx.bot.user:
                 damage = damage * 2
-
 
             if bossfight:
                 damage = int(damage * 620)

@@ -23,6 +23,7 @@ class TwitchSource(DataBasedSource):
 
     class TwitchUser(DataBasedSource.DataPoint):
         """A helper class to represent a single Twitch streamer"""
+
         def __init__(self, user_id, display_name, profile_image_url, login):
             super().__init__(login, display_name)
             self.user_id = user_id

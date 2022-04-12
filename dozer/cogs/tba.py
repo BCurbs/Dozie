@@ -1,20 +1,21 @@
 """A series of commands that talk to The Blue Alliance."""
+
 import datetime
+
 import io
 import itertools
 import json
 from pprint import pformat
 from urllib.parse import quote as urlquote, urljoin
-
-import aiohttp
-import aiotba
-import async_timeout
 import discord
-import googlemaps
+from discord.ext import commands
 from discord.ext.commands import BadArgument
 from discord_slash import cog_ext, SlashContext
 from geopy.geocoders import Nominatim
-from discord.ext import commands
+import googlemaps
+import aiohttp
+import aiotba
+import async_timeout
 
 from dozer.context import DozerContext
 from ._utils import *
@@ -22,6 +23,7 @@ from ._utils import *
 
 class TBA(Cog):
     """Commands that talk to The Blue Alliance"""
+
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         tba_config = bot.config['tba']
@@ -238,7 +240,7 @@ class TBA(Cog):
 
     @command()
     @bot_has_permissions(embed_links=True)
-    async def weather(self, ctx: DozerContext, team_program: str, team_num:int):
+    async def weather(self, ctx: DozerContext, team_program: str, team_num: int):
         """Finds the current weather for a given team."""
 
         if team_program.lower() == "frc":
