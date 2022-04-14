@@ -8,7 +8,7 @@ import re
 import time
 import typing
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.ext.commands import BadArgument, has_permissions, RoleConverter, guild_only
 
 
@@ -65,7 +65,7 @@ class Moderation(Cog):
                         count += 1
         return count
 
-    @discord.ext.tasks.loop(hours=168)
+    @tasks.loop(hours=168)
     async def nm_kick(self):
         """Kicks new members"""
         await self.nm_kick_internal()
