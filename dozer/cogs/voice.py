@@ -220,8 +220,9 @@ class AutoPTT(db.DatabaseTable):
         results = await super().get_by(**kwargs)
         result_list = []
         for result in results:
-            obj = AutoPTT(channel_id=result.get("channel_id"),
-                          ptt_limit=result.get("ptt_limit"))
+            obj = AutoPTT(
+                channel_id=result.get("channel_id"),
+                ptt_limit=result.get("ptt_limit"))
             result_list.append(obj)
         return result_list
 
