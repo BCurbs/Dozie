@@ -4,10 +4,11 @@ import datetime
 import logging
 import math
 import time
-
 import discord
+from discord.ext import commands
 from discord.ext.commands import has_permissions, BadArgument
 
+from dozer.context import DozerContext
 from ._utils import *
 from .general import blurple
 from .. import db
@@ -21,14 +22,15 @@ async def embed_paginatorinator(content_name, embed, text):
     c_embed = embed.copy()
     c_embed.add_field(name=content_name, value=text[0:1023], inline=False)
     for n in range(1, required_chunks):
-        c_embed.add_field(name=f"{content_name} Continued ({n})", value=text[1024*n:(1024*(n+1))-1], inline=False)
+        c_embed.add_field(name=f"{content_name} Continued ({n})", value=text[1024 * n:(1024 * (n + 1)) - 1],
+                          inline=False)
     return c_embed
 
 
 class Actionlog(Cog):
     """A cog to handle guild events tasks"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         super().__init__(bot)
         self.edit_delete_config = db.ConfigCache(GuildMessageLog)
         self.bulk_delete_buffer = {}
@@ -242,7 +244,7 @@ class Actionlog(Cog):
         await header_message.edit(embed=header_embed)
 
     @Cog.listener()
-    async def on_raw_message_delete(self, payload):
+    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent):
         """When a message is deleted and its not in the bot cache, log it anyway."""
         if payload.cached_message:
             return
@@ -262,7 +264,7 @@ class Actionlog(Cog):
                 await channel.send(embed=embed)
 
     @Cog.listener('on_message_delete')
-    async def on_message_delete(self, message):
+    async def on_message_delete(self, message: discord.Message):
         """When a message is deleted, log it."""
         if message.author == self.bot.user:
             return
@@ -289,7 +291,7 @@ class Actionlog(Cog):
                 await channel.send(embed=embed)
 
     @Cog.listener()
-    async def on_raw_message_edit(self, payload):
+    async def on_raw_message_edit(self, payload: discord.RawMessageUpdateEvent):
         """Logs message edits that are not currently in the bots message cache"""
         if payload.cached_message:
             return
@@ -330,7 +332,7 @@ class Actionlog(Cog):
                 await channel.send(embed=embed)
 
     @Cog.listener('on_message_edit')
-    async def on_message_edit(self, before, after):
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
         """Logs message edits."""
         if before.author.bot:
             return
@@ -365,15 +367,17 @@ class Actionlog(Cog):
                     first_message = await channel.send(embed=first_embed)
                     if second_embed:
                         second_message = await channel.send(embed=second_embed)
-                        first_embed.add_field(name="Edited", value=f"[CONTINUED](https://discordapp.com/channels/{guild_id}"
-                                                                   f"/{second_message.channel.id}/{second_message.id})", inline=False)
+                        first_embed.add_field(name="Edited",
+                                              value=f"[CONTINUED](https://discordapp.com/channels/{guild_id}"
+                                                    f"/{second_message.channel.id}/{second_message.id})", inline=False)
                         await first_message.edit(embed=first_embed)
-                        embed.set_field_at(0, name="Original", value=f"[CONTINUED](https://discordapp.com/channels/{guild_id}"
-                                                                     f"/{first_message.channel.id}/{first_message.id})", inline=False)
+                        embed.set_field_at(0, name="Original",
+                                           value=f"[CONTINUED](https://discordapp.com/channels/{guild_id}"
+                                                 f"/{first_message.channel.id}/{first_message.id})", inline=False)
                         await second_message.edit(embed=second_embed)
 
     @Cog.listener('on_member_ban')
-    async def on_member_ban(self, guild, user):
+    async def on_member_ban(self, guild: discord.Guild, user: discord.User):
         """Logs raw member ban events, even if not banned via &ban"""
         audit = await self.check_audit(guild, discord.AuditLogAction.ban)
         embed = discord.Embed(title="User Banned", color=0xff6700)
@@ -396,7 +400,7 @@ class Actionlog(Cog):
 
     @command()
     @has_permissions(administrator=True)
-    async def messagelogconfig(self, ctx, channel_mentions: discord.TextChannel):
+    async def messagelogconfig(self, ctx: DozerContext, channel_mentions: discord.TextChannel):
         """Set the modlog channel for a server by passing the channel id"""
         config = await GuildMessageLog.get_by(guild_id=ctx.guild.id)
         if len(config) != 0:
@@ -415,7 +419,7 @@ class Actionlog(Cog):
 
     @group(invoke_without_command=True)
     @has_permissions(administrator=True)
-    async def memberlogconfig(self, ctx):
+    async def memberlogconfig(self, ctx: DozerContext):
         """Command group to configure Join/Leave logs"""
         config = await CustomJoinLeaveMessages.get_by(guild_id=ctx.guild.id)
         embed = discord.Embed(title=f"Join/Leave configuration for {ctx.guild}", color=blurple)
@@ -441,7 +445,7 @@ class Actionlog(Cog):
 
     @memberlogconfig.command()
     @has_permissions(manage_guild=True)
-    async def setchannel(self, ctx, channel: discord.TextChannel):
+    async def setchannel(self, ctx: DozerContext, channel: discord.TextChannel):
         """Configure join/leave channel"""
         config = CustomJoinLeaveMessages(
             guild_id=ctx.guild.id,
@@ -455,7 +459,7 @@ class Actionlog(Cog):
 
     @memberlogconfig.command()
     @has_permissions(manage_guild=True)
-    async def toggleping(self, ctx):
+    async def toggleping(self, ctx: DozerContext):
         """Toggles whenever a new member gets pinged on join"""
         config = await CustomJoinLeaveMessages.get_by(guild_id=ctx.guild.id)
         if len(config):
@@ -471,7 +475,7 @@ class Actionlog(Cog):
 
     @memberlogconfig.command()
     @has_permissions(manage_guild=True)
-    async def setjoinmessage(self, ctx, *, template: str = None):
+    async def setjoinmessage(self, ctx: DozerContext, *, template: str = None):
         """Configure custom join message template"""
         e = discord.Embed(color=blurple)
         e.set_footer(text='Triggered by ' + ctx.author.display_name)
@@ -492,7 +496,7 @@ class Actionlog(Cog):
 
     @memberlogconfig.command()
     @has_permissions(manage_guild=True)
-    async def setleavemessage(self, ctx, *, template=None):
+    async def setleavemessage(self, ctx: DozerContext, *, template=None):
         """Configure custom leave message template"""
         e = discord.Embed(color=blurple)
         e.set_footer(text='Triggered by ' + ctx.author.display_name)
@@ -513,7 +517,7 @@ class Actionlog(Cog):
 
     @memberlogconfig.command()
     @has_permissions(manage_guild=True)
-    async def disable(self, ctx):
+    async def disable(self, ctx: DozerContext):
         """Disables Join/Leave logging"""
         e = discord.Embed(color=blurple)
         e.set_footer(text='Triggered by ' + ctx.author.display_name)
@@ -528,7 +532,7 @@ class Actionlog(Cog):
     @memberlogconfig.command()
     @has_permissions(manage_guild=True)
     async def help(self,
-                   ctx):  # I cannot put formatting example in example_usage because then it trys to format the example
+                   ctx: DozerContext):  # I cannot put formatting example in example_usage because then it trys to format the example
         """Displays message formatting key"""
         e = discord.Embed(color=blurple)
         e.set_footer(text='Triggered by ' + ctx.author.display_name)
@@ -544,7 +548,7 @@ class Actionlog(Cog):
     @command()
     @has_permissions(manage_nicknames=True)
     @bot_has_permissions(manage_nicknames=True)
-    async def locknickname(self, ctx, member: discord.Member, *, name: str):
+    async def locknickname(self, ctx: DozerContext, member: discord.Member, *, name: str):
         """Locks a members nickname to a particular string, in essence revoking nickname change perms"""
         try:
             await member.edit(nick=name)
@@ -569,7 +573,7 @@ class Actionlog(Cog):
     @command()
     @has_permissions(manage_nicknames=True)
     @bot_has_permissions(manage_nicknames=True)
-    async def unlocknickname(self, ctx, member: discord.Member):
+    async def unlocknickname(self, ctx: DozerContext, member: discord.Member):
         """Removes nickname lock from member"""
         deleted = await NicknameLock.delete(guild_id=ctx.guild.id, member_id=member.id)
         if int(deleted.split(" ", 1)[1]):
@@ -603,7 +607,7 @@ class NicknameLock(db.DatabaseTable):
             UNIQUE (guild_id, member_id)
             )""")
 
-    def __init__(self, guild_id, member_id, locked_name, timeout=None):
+    def __init__(self, guild_id: int, member_id: int, locked_name: str, timeout: float = None):
         super().__init__()
         self.guild_id = guild_id
         self.member_id = member_id
@@ -637,7 +641,8 @@ class CustomJoinLeaveMessages(db.DatabaseTable):
             name varchar NOT NULL
             )""")
 
-    def __init__(self, guild_id, channel_id=None, ping=None, join_message=None, leave_message=None):
+    def __init__(self, guild_id: int, channel_id: int = None, ping=None, join_message: str = None,
+                 leave_message: str = None):
         super().__init__()
         self.guild_id = guild_id
         self.channel_id = channel_id
@@ -691,7 +696,7 @@ class GuildMessageLog(db.DatabaseTable):
             messagelog_channel bigint NOT NULL
             )""")
 
-    def __init__(self, guild_id, name, messagelog_channel):
+    def __init__(self, guild_id: int, name: str, messagelog_channel: int):
         super().__init__()
         self.guild_id = guild_id
         self.name = name

@@ -1,8 +1,6 @@
 """Provides some useful utilities for the Discord bot, mostly to do with cleaning."""
-
 import re
 from urllib.parse import urlencode
-
 import discord
 
 __all__ = ['clean', 'is_clean']
