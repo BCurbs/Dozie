@@ -72,7 +72,7 @@ class Polls(Cog):
             description=''.join(description),
             colour=discord.Colour.blue()
         )
-        embed.set_footer("Invoked by " + ctx.author.display_name)
+        embed.set_footer(text="Invoked by " + ctx.author.display_name)
         message = await ctx.send(embed=embed)
 
         for reaction in reactions[:len(options)]:
