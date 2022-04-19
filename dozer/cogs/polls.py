@@ -28,7 +28,7 @@ class Polls(Cog):
         """Command to create a very simple poll."""
         try:
             await ctx.message.delete()
-        except discord.ext.commands.BotMissingPermissions:
+        except discord.ext.commands.MissingPermissions:
             DOZER_LOGGER.debug("Could not delete poll invoke message. ")
         # Separate title and options
         splitted = poll_options.split('" ')
