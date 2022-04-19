@@ -1,20 +1,10 @@
 """Very simple polls cog. """
-import asyncio
-import datetime
-import logging
-import re
-import time
-import typing
 from logging import getLogger
-from typing import Union
 
 import discord
-from discord.ext import tasks
-from discord.ext.commands import BadArgument, has_permissions, RoleConverter, guild_only
+from discord.ext.commands import has_permissions
 
 from ._utils import *
-from .general import blurple
-from .. import db
 
 DOZER_LOGGER = getLogger(__name__)
 
@@ -79,9 +69,9 @@ class Polls(Cog):
             await message.add_reaction(reaction)
 
     poll.example_usage = (
-        "`{prefix}poll \"Are polls cool?\" \"Yes\" \"No\"` - Makes a poll with 2 options. `{prefix}poll \n"
-        "\"What should we name the robot?\" \"Bolt Bucket\" \"Susan\" \"Programming did it\"` - Makes a poll with the "
-        "3 listed options. ")
+        "`{prefix}poll \"Are polls cool?\" \"Yes\" \"No\"` - Makes a poll with 2 options. `{prefix}poll "
+        "\n\"What should we name the robot?\" \"Bolt Bucket\" \"Susan\" \"Programming did it\"` - Makes a poll with "
+        "the 3 listed options. ")
 
 
 def setup(bot):
