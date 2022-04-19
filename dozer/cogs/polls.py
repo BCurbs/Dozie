@@ -69,8 +69,8 @@ class Polls(Cog):
             await message.add_reaction(reaction)
 
     poll.example_usage = (
-        "`{prefix}poll \"Are polls cool?\" \"Yes\" \"No\"` - Makes a poll with 2 options. `{prefix}poll "
-        "\n\"What should we name the robot?\" \"Bolt Bucket\" \"Susan\" \"Programming did it\"` - Makes a poll with "
+        "`{prefix}poll \"Are polls cool?\" \"Yes\" \"No\"` - Makes a poll with 2 options. \n`{prefix}poll "
+        "\"What should we name the robot?\" \"Bolt Bucket\" \"Susan\" \"Programming did it\"` - Makes a poll with "
         "the 3 listed options. ")
 
 
