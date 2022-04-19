@@ -6,7 +6,7 @@ import discord
 
 from .AbstractSources import DataBasedSource
 
-DOZER_LOGGER = logging.getLogger('dozer')
+DOZER_LOGGER = logging.getLogger(__name__)
 
 
 class RedditSource(DataBasedSource):

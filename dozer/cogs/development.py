@@ -10,7 +10,7 @@ from discord.ext.commands import NotOwner
 from dozer.context import DozerContext
 from ._utils import *
 
-DOZER_LOGGER = logging.getLogger("dozer")
+DOZER_LOGGER = logging.getLogger(__name__)
 
 
 class Development(Cog):

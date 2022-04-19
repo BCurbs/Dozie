@@ -47,7 +47,7 @@ class Moderation(Cog):
 
     async def nm_kick_internal(self, guild: discord.Guild = None):
         """Kicks people who have not done the new member process within a set amount of time."""
-        getLogger("dozer").debug("Starting nm_kick cycle...")
+        getLogger(__name__).debug("Starting nm_kick cycle...")
         if not guild:
             entries = await NewMemPurgeConfig.get_by()
         else:
@@ -325,7 +325,7 @@ class Moderation(Cog):
             self.bot.loop.create_task(
                 self.punishment_timer(seconds, target, PunishmentTimerRecords.type_map[punishment_type], reason, actor,
                                       orig_channel))
-            getLogger('dozer').info(
+            getLogger(__name__).info(
                 f"Restarted {PunishmentTimerRecords.type_map[punishment_type].__name__} of {target} in {guild}")
         await self.nm_kick.start()
 

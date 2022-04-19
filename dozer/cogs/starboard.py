@@ -13,7 +13,7 @@ from .. import db
 MAX_EMBED = 1024
 LOCK_TIME = .1
 FORCE_TRY_TIME = 1
-DOZER_LOGGER = logging.getLogger('dozer')
+DOZER_LOGGER = logging.getLogger(__name__)
 VIDEO_FORMATS = ['.mp4', '.mov', 'webm']
 
 

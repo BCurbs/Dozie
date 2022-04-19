@@ -14,7 +14,7 @@ from dozer.context import DozerContext
 __all__ = ['bot_has_permissions', 'command', 'group', 'Cog', 'Reactor', 'Paginator', 'paginate', 'chunk', 'dev_check',
            'DynamicPrefixEntry']
 
-DOZER_LOGGER = logging.getLogger("dozer")
+DOZER_LOGGER = logging.getLogger(__name__)
 
 
 class CommandMixin:

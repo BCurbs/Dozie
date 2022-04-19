@@ -7,7 +7,7 @@ from dateutil import parser
 
 from .AbstractSources import DataBasedSource
 
-DOZER_LOGGER = logging.getLogger('dozer')
+DOZER_LOGGER = logging.getLogger(__name__)
 
 
 class TwitchSource(DataBasedSource):

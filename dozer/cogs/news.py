@@ -15,7 +15,7 @@ from ._utils import *
 from .. import db
 from ..sources import DataBasedSource, Source, sources
 
-DOZER_LOGGER = logging.getLogger('dozer')
+DOZER_LOGGER = logging.getLogger(__name__)
 
 
 def str_or_none(obj):

@@ -13,7 +13,7 @@ from . import utils
 from .cogs import _utils
 from .context import DozerContext
 
-DOZER_LOGGER = logging.getLogger('dozer')
+DOZER_LOGGER = logging.getLogger(__name__)
 DOZER_LOGGER.level = logging.INFO
 DOZER_HANDLER = logging.StreamHandler(stream=sys.stdout)
 DOZER_HANDLER.level = logging.INFO
