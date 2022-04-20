@@ -109,7 +109,8 @@ class Info(Cog):
         filtered = [activities[0]]
         for activity in activities[1:]:  # Expensive metadata is computed about seq2, so change it less frequently
             matcher.set_seq2(
-                str(activity.name))  # Activity must be string, otherwise None will be passed into the matcher. An that breaks stuff
+                str(activity.name))  # Activity must be string, otherwise None will be passed into the matcher. An
+            # that breaks stuff
             for filtered_activity in filtered:
                 matcher.set_seq1(str(filtered_activity.name))
                 if matcher.quick_ratio() < 0.6 and matcher.ratio() < 0.6:  # Use quick_ratio if we can as ratio is slow

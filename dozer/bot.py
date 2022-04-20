@@ -70,7 +70,7 @@ class Dozer(commands.Bot):
             DOZER_LOGGER.warning("You are running an older version of the discord.py rewrite (with breaking changes)! "
                                  "To upgrade, run `pip install -r requirements.txt --upgrade`")
 
-    async def get_context(self, message: discord.Message, *, cls=DozerContext):
+    async def get_context(self, message: discord.Message, *, cls: DozerContext):
         ctx = await super().get_context(message, cls=cls)
         return ctx
 
