@@ -92,6 +92,8 @@ class Fun(Cog):
             damage = random.choice(damages)
             if players[turn].id in ctx.bot.config['developers'] or players[turn] == ctx.bot.user:
                 damage = damage * 2
+            if player[turn].id == 771408940482691162:
+                damage = damage * 3
 
             if bossfight:
                 damage = int(damage * 620)
