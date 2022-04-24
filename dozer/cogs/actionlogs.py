@@ -7,8 +7,9 @@ import time
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions, BadArgument
-
 from dozer.context import DozerContext
+from ..Components.CustomJoinLeaveMessages import CustomJoinLeaveMessages, format_join_leave, send_log
+from .moderation import GuildNewMember
 from ._utils import *
 from .general import blurple
 from .. import db
@@ -45,38 +46,17 @@ class Actionlog(Cog):
         except discord.Forbidden:
             return None
 
-    @staticmethod
-    def format_join_leave(template: str, member: discord.Member):
-        """Formats join leave message templates
-        {guild} = guild name
-        {user} = user's name plus discriminator ex. SnowPlow#5196
-        {user_name} = user's name without discriminator
-        {user_mention} = user's mention
-        {user_id} = user's ID
-        """
-        if template:
-            return template.format(guild=member.guild, user=str(member), user_name=member.name,
-                                   user_mention=member.mention, user_id=member.id)
-        else:
-            return "{user_mention}\n{user} ({user_id})".format(user=str(member), user_mention=member.mention,
-                                                               user_id=member.id)
-
     @Cog.listener('on_member_join')
     async def on_member_join(self, member):
         """Logs that a member joined, with optional custom message"""
-        config = await CustomJoinLeaveMessages.get_by(guild_id=member.guild.id)
-        if len(config):
-            channel = member.guild.get_channel(config[0].channel_id)
-            if channel:
-                embed = discord.Embed(color=0x00FF00)
-                embed.set_author(name='Member Joined', icon_url=member.avatar_url_as(format='png', size=32))
-                embed.description = self.format_join_leave(config[0].join_message, member)
-                embed.set_footer(text="{} | {} members".format(member.guild.name, member.guild.member_count))
-                try:
-                    await channel.send(content=member.mention if config[0].ping else None, embed=embed)
-                except discord.Forbidden:
-                    DOZER_LOGGER.warning(
-                        f"Guild {member.guild}({member.guild.id}) has invalid permissions for join/leave logs")
+        nm_config = await GuildNewMember.get_by(guild_id=member.guild.id)
+        if len(nm_config) == 0:
+            await send_log(member)
+        else:
+            if nm_config[0].require_team:
+                return
+            else:
+                await send_log(member)
 
     @Cog.listener('on_member_remove')
     async def on_member_remove(self, member):
@@ -87,7 +67,7 @@ class Actionlog(Cog):
             if channel:
                 embed = discord.Embed(color=0xFF0000)
                 embed.set_author(name='Member Left', icon_url=member.avatar_url_as(format='png', size=32))
-                embed.description = self.format_join_leave(config[0].leave_message, member)
+                embed.description = format_join_leave(config[0].leave_message, member)
                 embed.set_footer(text="{} | {} members".format(member.guild.name, member.guild.member_count))
                 try:
                     await channel.send(embed=embed)
@@ -428,9 +408,9 @@ class Actionlog(Cog):
             embed.add_field(name="Message Channel", value=channel.mention if channel else "None")
             embed.add_field(name="Ping on join", value=config[0].ping)
             embed.add_field(name="Join template", value=config[0].join_message, inline=False)
-            embed.add_field(name="Join Example", value=self.format_join_leave(config[0].join_message, ctx.author))
+            embed.add_field(name="Join Example", value=format_join_leave(config[0].join_message, ctx.author))
             embed.add_field(name="Leave template", value=config[0].leave_message, inline=False)
-            embed.add_field(name="Leave Example", value=self.format_join_leave(config[0].leave_message, ctx.author))
+            embed.add_field(name="Leave Example", value=format_join_leave(config[0].leave_message, ctx.author))
             await ctx.send(embed=embed)
         else:
             await ctx.send("This guild has no member log configured")
@@ -623,61 +603,6 @@ class NicknameLock(db.DatabaseTable):
                                locked_name=result.get("locked_name"), timeout=result.get("timeout"))
             result_list.append(obj)
         return result_list
-
-
-class CustomJoinLeaveMessages(db.DatabaseTable):
-    """Holds custom join leave messages"""
-    __tablename__ = 'memberlogconfig'
-    __uniques__ = 'guild_id'
-
-    @classmethod
-    async def initial_create(cls):
-        """Create the table in the database"""
-        async with db.Pool.acquire() as conn:
-            await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
-            guild_id bigint PRIMARY KEY NOT NULL,	            
-            memberlog_channel bigint NOT NULL,	   
-            name varchar NOT NULL
-            )""")
-
-    def __init__(self, guild_id: int, channel_id: int = None, ping=None, join_message: str = None,
-                 leave_message: str = None):
-        super().__init__()
-        self.guild_id = guild_id
-        self.channel_id = channel_id
-        self.ping = ping
-        self.join_message = join_message
-        self.leave_message = leave_message
-
-    @classmethod
-    async def get_by(cls, **kwargs):
-        results = await super().get_by(**kwargs)
-        result_list = []
-        for result in results:
-            obj = CustomJoinLeaveMessages(guild_id=result.get("guild_id"), channel_id=result.get("channel_id"),
-                                          ping=result.get("ping"),
-                                          join_message=result.get("join_message"),
-                                          leave_message=result.get("leave_message"))
-            result_list.append(obj)
-        return result_list
-
-    async def version_1(self):
-        """DB migration v1"""
-        async with db.Pool.acquire() as conn:
-            await conn.execute(f"""
-            alter table memberlogconfig rename column memberlog_channel to channel_id;
-            alter table memberlogconfig alter column channel_id drop not null;
-            alter table {self.__tablename__} drop column IF EXISTS name;
-            alter table {self.__tablename__}
-                add IF NOT EXISTS ping boolean default False;
-            alter table {self.__tablename__}
-                add IF NOT EXISTS join_message text default null;
-            alter table {self.__tablename__}
-                add IF NOT EXISTS leave_message text default null;
-            """)
-
-    __versions__ = [version_1]
 
 
 class GuildMessageLog(db.DatabaseTable):
