@@ -81,7 +81,7 @@ class Fun(Cog):
                 'developers']) or ctx.bot.user.id == opponent.id:
             await ctx.send('**Boss Fight started**')
             bossfight = True
-            hps = [1400000, 1400000]
+            hps = [140000, 140000]
         else:
             hps = [1400, 1400]
 
