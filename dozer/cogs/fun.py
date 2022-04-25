@@ -41,7 +41,7 @@ class Fun(Cog):
             "**{opponent}** had the scale dropped on them by **{attacker}**",
             "**{opponent}** had `git rm --force` executed on them by **{attacker}**",
             "**{opponent}** was blamed for breaking the robot by **{attacker}**",
-            # this and the following messages up to the next comment are custom by @BCurbs#3937
+            # this and the following messages up to the next comment are custom by @transorsmth#7483
             "**{opponent}** had their autonomous broken by **{attacker}**",
             "**{opponent}** was voted out by **{attacker}**",
             "**{opponent}** was called sus by **{attacker}**",
@@ -95,7 +95,7 @@ class Fun(Cog):
                 damage = damage * 2
 
             if bossfight:
-                damage = int(damage * 620)
+                damage = int(damage * 62)
             hps[opp_idx] = max(hps[opp_idx] - damage, 0)
             messages.append(
                 await ctx.send(
