@@ -60,6 +60,29 @@ class Development(Cog):
     `{prefix}document` - Runs the documentation cycle
     """
 
+    @command(name='shell')
+    async def script(self, ctx, *, code):
+        """
+        Runs shell commands sent.
+        """
+        DOZER_LOGGER.info(
+            f"Evaluating shell command at request of {ctx.author} ({ctx.author.id}) in '{ctx.guild}' #{ctx.channel}:")
+        DOZER_LOGGER.info("-" * 32)
+        for line in code.splitlines():
+            DOZER_LOGGER.info(line)
+        DOZER_LOGGER.info("-" * 32)
+        try:
+            await ctx.send("Evaluating command")
+            output = subprocess.check_output(code, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+                                             shell=True).decode('utf-8')
+            if len(output) > 1970:
+                for index in range(0, len(output), 1970):
+                    await ctx.send(f"```bash\n{output[index: index + 1970]}\n```")
+            else:
+                await ctx.send(f"```bash\n{output}\n```")
+        except subprocess.CalledProcessError as e:
+            await ctx.send(e.output.decode('utf-8')[0:2000])
+
     @command(name='eval')
     async def evaluate(self, ctx: DozerContext, *, code: str):
         """
