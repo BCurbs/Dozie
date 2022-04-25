@@ -7,6 +7,8 @@ import time
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions, BadArgument
+from discord.utils import escape_markdown
+
 from dozer.context import DozerContext
 from ..Components.CustomJoinLeaveMessages import CustomJoinLeaveMessages, format_join_leave, send_log
 from .moderation import GuildNewMember
@@ -434,7 +436,7 @@ class Actionlog(Cog):
         await config.update_or_add()
         e = discord.Embed(color=blurple)
         e.add_field(name='Success!', value=f"Join/Leave log channel has been set to {channel.mention}")
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         await ctx.send(embed=e)
 
     @memberlogconfig.command()
@@ -450,7 +452,7 @@ class Actionlog(Cog):
 
         e = discord.Embed(color=blurple)
         e.add_field(name='Success!', value=f"Ping on join is set to: {config[0].ping}")
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         await ctx.send(embed=e)
 
     @memberlogconfig.command()
@@ -458,7 +460,7 @@ class Actionlog(Cog):
     async def setjoinmessage(self, ctx: DozerContext, *, template: str = None):
         """Configure custom join message template"""
         e = discord.Embed(color=blurple)
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         if template:
             config = CustomJoinLeaveMessages(
                 guild_id=ctx.guild.id,
@@ -479,7 +481,7 @@ class Actionlog(Cog):
     async def setleavemessage(self, ctx: DozerContext, *, template=None):
         """Configure custom leave message template"""
         e = discord.Embed(color=blurple)
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         if template:
             config = CustomJoinLeaveMessages(
                 guild_id=ctx.guild.id,
@@ -500,7 +502,7 @@ class Actionlog(Cog):
     async def disable(self, ctx: DozerContext):
         """Disables Join/Leave logging"""
         e = discord.Embed(color=blurple)
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         config = CustomJoinLeaveMessages(
             guild_id=ctx.guild.id,
             channel_id=CustomJoinLeaveMessages.nullify
@@ -515,7 +517,7 @@ class Actionlog(Cog):
                    ctx: DozerContext):  # I cannot put formatting example in example_usage because then it trys to format the example
         """Displays message formatting key"""
         e = discord.Embed(color=blurple)
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         e.description = """
         `{guild}` = guild name
         `{user}` = user's name plus discriminator ex. SnowPlow#5196
@@ -543,7 +545,7 @@ class Actionlog(Cog):
         await lock.update_or_add()
         e = discord.Embed(color=blurple)
         e.add_field(name='Success!', value=f"**{member}**'s nickname has been locked to **{name}**")
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         await ctx.send(embed=e)
 
     locknickname.example_usage = """
@@ -559,7 +561,7 @@ class Actionlog(Cog):
         if int(deleted.split(" ", 1)[1]):
             e = discord.Embed(color=blurple)
             e.add_field(name='Success!', value=f"Nickname lock for {member} has been removed")
-            e.set_footer(text='Triggered by ' + ctx.author.display_name)
+            e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
             await ctx.send(embed=e)
         else:
             raise BadArgument(f"No member of {member} found with nickname lock!")

@@ -8,6 +8,7 @@ import aiohttp
 import async_timeout
 import discord
 from discord.ext import commands
+from discord.utils import escape_markdown
 from discord_slash import cog_ext, SlashContext
 
 
@@ -101,7 +102,7 @@ class TOA(Cog):
                     value=', '.join((team_data['city'], team_data['state_prov'], team_data['country'])))
         e.add_field(name='Website', value=team_data['website'] or 'n/a')
         e.add_field(name='Team Info Page', value='https://theorangealliance.org/teams/{}'.format(team_data['team_key']))
-        e.set_footer(text='Triggered by ' + ctx.author.display_name)
+        e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         await ctx.send('', embed=e)
 
     team.example_usage = """
