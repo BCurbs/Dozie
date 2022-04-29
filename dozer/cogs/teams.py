@@ -197,7 +197,7 @@ class Teams(Cog):
         )
         await new_settings.update_or_add()
         e = discord.Embed(color=blurple)
-        modetext = "Enabled" if enabled else "Disabled"
+        modetext = "Enabled" if not enabled else "Disabled"
         e.add_field(name='Success!', value=f"Automatic adding of team association is currently: **{modetext}**")
         e.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
         await ctx.send(embed=e)
@@ -213,15 +213,6 @@ class Teams(Cog):
                 nick = "{} {}{}".format(member.display_name, query[0].team_type, query[0].team_number)
                 if len(nick) <= 32:
                     await member.edit(nick=nick)
-
-    @command()
-    @dev_check()
-    async def checksettings(self, ctx):
-        settings = await AutoAssociation.get_by(guild_id=ctx.guild.id)
-
-        await ctx.send("true" if settings else "false")
-        await ctx.send(str(settings[0].team_on_join if settings else "None"))
-        await ctx.send(settings)
 
 
 class AutoAssociation(db.DatabaseTable):
