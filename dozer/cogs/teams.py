@@ -220,7 +220,7 @@ class Teams(Cog):
         settings = await AutoAssociation.get_by(guild_id=ctx.guild.id)
 
         await ctx.send("true" if settings else "false")
-        await ctx.send(str(settings[0].team_on_join if settings else True))
+        await ctx.send(str(settings[0].team_on_join if settings else "None"))
         await ctx.send(settings)
 
 
