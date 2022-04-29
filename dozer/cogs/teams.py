@@ -213,13 +213,14 @@ class Teams(Cog):
                 nick = "{} {}{}".format(member.display_name, query[0].team_type, query[0].team_number)
                 if len(nick) <= 32:
                     await member.edit(nick=nick)
+
     @command()
     @dev_check()
     async def checksettings(self, ctx):
         settings = await AutoAssociation.get_by(guild_id=ctx.guild.id)
 
         await ctx.send("true" if settings else "false")
-        await ctx.send(settings[0].team_on_join if settings else True)
+        await ctx.send(str(settings[0].team_on_join if settings else True))
         await ctx.send(settings)
 
 
