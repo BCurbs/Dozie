@@ -51,7 +51,10 @@ class Fun(Cog):
             "**{opponent}** was hit with a stapler by **{attacker}**",
             "**{opponent}** was knocked off the traversal bar by **{attacker}**",
             "**{opponent}** had their battery fall out out thanks to **{attacker}**",
-            # this and the following messages are thanks to J-Man from the CHS discord server, who expended their creative powers on these statements.
+            "**{opponent}** had their season ended by **{attacker}**",
+            "**{opponent}** had their roborio bricked by **{attacker}**",
+            # this and the following messages are thanks to J-Man from the CHS discord server, who expended their
+            # creative powers on these statements.
             "**{opponent}** extended too far outside their frame perimeter in front of **{attacker}**",
             "**{opponent}** lost a coffee-drinking competition against **{attacker}**",
             "**{opponent}** was a no-show against **{attacker}**",
