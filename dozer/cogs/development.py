@@ -71,17 +71,25 @@ class Development(Cog):
         for line in code.splitlines():
             DOZER_LOGGER.info(line)
         DOZER_LOGGER.info("-" * 32)
+        msg = await ctx.send(embed=discord.Embed(title="Evaluating command", color=discord.Color.orange()))
         try:
-            await ctx.send("Evaluating command")
             output = subprocess.check_output(code, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
                                              shell=True).decode('utf-8')
-            if len(output) > 1970:
-                for index in range(0, len(output), 1970):
-                    await ctx.send(f"```bash\n{output[index: index + 1970]}\n```")
+            if len(output) > 3970:
+                for index in range(0, len(output), 3970):
+                    embed = discord.Embed(title="Evaluated command" if index == 0 else None,
+                                          description=f"```bash\n{output[index: index + 3970]}\n```",
+                                          color=discord.Color.green())
+                    if index == 0:
+                        await msg.edit(embed=embed)
+                    else:
+                        await ctx.send(embed=embed)
             else:
-                await ctx.send(f"```bash\n{output}\n```")
+                await msg.edit(embed=discord.Embed(title="Evaluated command", description=f"```bash\n{output}\n```",
+                                                   color=discord.Color.green()))
         except subprocess.CalledProcessError as e:
-            await ctx.send(e.output.decode('utf-8')[0:2000])
+            await msg.edit(embed=discord.Embed(title="Evaluation failed", description=e.output.decode('utf-8')[0:4000],
+                                               color=discord.Color.red()))
 
     @command(name='eval')
     async def evaluate(self, ctx: DozerContext, *, code: str):
