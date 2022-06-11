@@ -581,7 +581,7 @@ class NicknameLock(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NULL,
             member_id bigint NOT NULL,
             locked_name text,
@@ -617,7 +617,7 @@ class GuildMessageLog(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             name varchar NOT NULL,
             messagelog_channel bigint NOT NULL

@@ -924,7 +924,7 @@ class Mute(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             member_id bigint NOT NULL,
             guild_id bigint NOT NULL,
             PRIMARY KEY (member_id, guild_id)
@@ -976,7 +976,7 @@ class Deafen(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             member_id bigint NOT NULL,
             guild_id bigint NOT NULL,
             self_inflicted boolean NOT NULL,
@@ -1010,7 +1010,7 @@ class GuildModLog(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             modlog_channel bigint null,
             name varchar NOT NULL
@@ -1043,7 +1043,7 @@ class CrossBanSubscriptions(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__}(
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__}(
                 subscriber_id bigint NOT NULL,
                 subscription_id bigint NOT NULL,
                 UNIQUE (subscriber_id, subscription_id)
@@ -1074,7 +1074,7 @@ class MemberRole(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             member_role bigint null
             )""")
@@ -1104,7 +1104,7 @@ class NewMemPurgeConfig(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             member_role bigint not null,
             days int not null
@@ -1138,7 +1138,7 @@ class GuildNewMember(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY,
             channel_id bigint NOT NULL,
             role_id bigint NOT NULL,
@@ -1185,7 +1185,7 @@ class GuildMessageLinks(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             role_id bigint null
             )""")
@@ -1216,7 +1216,7 @@ class PunishmentTimerRecords(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             id serial PRIMARY KEY NOT NULL,
             guild_id bigint NOT NULL,
             actor_id bigint NOT NULL,

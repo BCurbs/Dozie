@@ -322,7 +322,7 @@ class WordFilter(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             filter_id serial PRIMARY KEY NOT NULL,
             enabled boolean default true NOT NULL,
             guild_id bigint NOT NULL,
@@ -360,7 +360,7 @@ class WordFilterSetting(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             id serial PRIMARY KEY NOT NULL,
             setting_type varchar NOT NULL,
             guild_id bigint NOT NULL,
@@ -394,7 +394,7 @@ class WordFilterRoleWhitelist(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NULL,
             role_id bigint PRIMARY KEY NOT NULL 
             )""")

@@ -805,7 +805,7 @@ class NameGameConfig(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             channel_id bigint null,
             mode varchar NOT NULL,
@@ -840,7 +840,7 @@ class NameGameLeaderboard(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             user_id bigint NOT NULL,
             wins bigint NOT NULL,
             game_mode varchar NOT NULL,

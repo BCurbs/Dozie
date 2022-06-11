@@ -198,7 +198,7 @@ class ScheduledMessages(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             entry_id serial,
             request_id bigint UNIQUE NOT NULL, 
             guild_id bigint NOT NULL,

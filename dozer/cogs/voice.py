@@ -168,7 +168,7 @@ class Voicebinds(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             id SERIAL PRIMARY KEY NOT NULL,
             guild_id bigint NOT NULL,
             channel_id bigint null,
@@ -206,7 +206,7 @@ class AutoPTT(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             channel_id bigint PRIMARY KEY NOT NULL,
             ptt_limit bigint null
             )""")

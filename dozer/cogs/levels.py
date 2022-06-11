@@ -753,7 +753,7 @@ class XPRole(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-                CREATE TABLE {cls.__tablename__} (
+                CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
                 guild_id bigint NOT NULL,
                 role_id bigint NOT NULL,
                 level int NOT NULL,
@@ -787,7 +787,7 @@ class MemberXP(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NULL,
             user_id bigint NOT NULL,
             total_xp bigint NOT NULL,
@@ -848,7 +848,7 @@ class GuildXPSettings(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             xp_min int NOT NULL,
             xp_max int NOT NULL,

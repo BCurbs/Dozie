@@ -770,7 +770,7 @@ class RoleMenu(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NULL,
             channel_id bigint NOT NULL,
             message_id bigint NOT NULL,
@@ -806,7 +806,7 @@ class ReactionRole(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NUll,
             channel_id bigint NOT NULL,
             message_id bigint NOT NULL,
@@ -845,7 +845,7 @@ class GiveableRole(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NULL,
             role_id bigint PRIMARY KEY NOT NULL,
             name varchar NOT NULL,
@@ -885,7 +885,7 @@ class MissingRole(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint NOT NULL,
             member_id bigint NOT NULL,
             role_id bigint NOT NULL,
@@ -922,7 +922,7 @@ class TempRoleTimerRecords(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             id serial PRIMARY KEY NOT NULL,
             guild_id bigint NOT NULL,
             target_id bigint NOT NULL,

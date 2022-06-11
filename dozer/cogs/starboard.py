@@ -340,7 +340,7 @@ class StarboardConfig(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             guild_id bigint PRIMARY KEY NOT NULL,
             channel_id bigint NOT NULL,
             star_emoji varchar NOT NULL,
@@ -378,7 +378,7 @@ class StarboardMessage(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE {cls.__tablename__} (
+            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
             message_id bigint PRIMARY KEY NOT NULL,
             channel_id bigint NOT NULL,
             starboard_message_id bigint NOT NULL,
