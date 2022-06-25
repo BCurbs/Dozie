@@ -24,8 +24,8 @@ class Roles(Cog):
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        for command in self.giveme.walk_commands():
-            @command.before_invoke
+        for role_command in self.giveme.walk_commands():
+            @role_command.before_invoke
             async def givemeautopurge(self, ctx: DozerContext):
                 """Before invoking a giveme command, run a purge"""
                 if await self.ctx_purge(ctx):
@@ -81,7 +81,7 @@ class Roles(Cog):
         await RoleMenu.delete(message_id=message_id)
 
     @Cog.listener()
-    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+    async def on_raw_reaction_add(self, payload):
         """Raw API event for reaction add, passes event to action handler"""
         await self.on_raw_reaction_action(payload)
 
