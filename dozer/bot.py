@@ -16,10 +16,10 @@ from .cogs import _utils
 from .context import DozerContext
 
 logger_format = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{" \
-                "name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | {extra[ip]} {extra[user]} - <level>{" \
+                "name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{" \
                 "message}</level> "
 logger.remove()
-logger.add(sys.stdout, format=logger_format, level="INFO")
+logger.add(sys.stdout, format=logger_format, level="INFO", enqueue=True, colorize=True)
 
 if discord.version_info.major < 1:
     logger.error("Your installed discord.py version is too low "
@@ -48,7 +48,7 @@ class Dozer(commands.Bot):
         self.config = config
         if self.config['debug']:
             logger.remove()
-            logger.add(sys.stdout, format=logger_format, level="DEBUG")
+            logger.add(sys.stdout, format=logger_format, level="DEBUG", enqueue=True, colorize=True)
         self._restarting = False
         self.check(self.global_checks)
 
