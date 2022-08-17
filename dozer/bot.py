@@ -1,11 +1,11 @@
 """Bot object for Dozer"""
 
-import logging
 import re
 import sys
 import traceback
 from typing import Pattern
 
+from loguru import logger
 import discord
 from discord.ext import commands
 from discord_slash import SlashCommand
@@ -15,19 +15,18 @@ from . import utils
 from .cogs import _utils
 from .context import DozerContext
 
-DOZER_LOGGER = logging.getLogger(__name__)
-DOZER_LOGGER.level = logging.INFO
-DOZER_HANDLER = logging.StreamHandler(stream=sys.stdout)
-DOZER_HANDLER.level = logging.INFO
-DOZER_LOGGER.addHandler(DOZER_HANDLER)
-DOZER_HANDLER.setFormatter(fmt=logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s'))
+logger_format = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{" \
+                "name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | {extra[ip]} {extra[user]} - <level>{" \
+                "message}</level> "
+logger.remove()
+logger.add(sys.stdout, format=logger_format, level="INFO")
 
 if discord.version_info.major < 1:
-    DOZER_LOGGER.error("Your installed discord.py version is too low "
-                       "%d.%d.%d, please upgrade to at least 1.0.0a",
-                       discord.version_info.major,
-                       discord.version_info.minor,
-                       discord.version_info.micro)
+    logger.error("Your installed discord.py version is too low "
+                 "%d.%d.%d, please upgrade to at least 1.0.0a",
+                 discord.version_info.major,
+                 discord.version_info.minor,
+                 discord.version_info.micro)
     sys.exit(1)
 
 
@@ -48,19 +47,19 @@ class Dozer(commands.Bot):
         self.slash = SlashCommand(self, sync_commands=True, override_type=True)
         self.config = config
         if self.config['debug']:
-            DOZER_LOGGER.level = logging.DEBUG
-            DOZER_HANDLER.level = logging.DEBUG
+            logger.remove()
+            logger.add(sys.stdout, format=logger_format, level="DEBUG")
         self._restarting = False
         self.check(self.global_checks)
 
     async def on_ready(self):
         """Things to run when the bot has initialized and signed in"""
-        DOZER_LOGGER.info('Signed in as {}#{} ({})'.format(self.user.name, self.user.discriminator, self.user.id))
+        logger.info('Signed in as {}#{} ({})'.format(self.user.name, self.user.discriminator, self.user.id))
         await self.dynamic_prefix.refresh()
         perms = 0
         for cmd in self.walk_commands():
             perms |= cmd.required_permissions.value
-        DOZER_LOGGER.debug('Bot Invite: {}'.format(utils.oauth_url(self.user.id, discord.Permissions(perms))))
+        logger.debug('Bot Invite: {}'.format(utils.oauth_url(self.user.id, discord.Permissions(perms))))
         if self.config['is_backup']:
             status = discord.Status.dnd
         else:
@@ -69,8 +68,8 @@ class Dozer(commands.Bot):
         try:
             await self.change_presence(activity=activity, status=status)
         except TypeError:
-            DOZER_LOGGER.warning("You are running an older version of the discord.py rewrite (with breaking changes)! "
-                                 "To upgrade, run `pip install -r requirements.txt --upgrade`")
+            logger.warning("You are running an older version of the discord.py rewrite (with breaking changes)! "
+                           "To upgrade, run `pip install -r requirements.txt --upgrade`")
 
     async def get_context(self, message: discord.Message, *, cls=DozerContext):
         ctx = await super().get_context(message, cls=cls)
@@ -112,14 +111,14 @@ class Dozer(commands.Bot):
             await context.send(
                 '```\n%s\n```' % ''.join(traceback.format_exception_only(type(exception), exception)).strip())
             if isinstance(context.channel, discord.TextChannel):
-                DOZER_LOGGER.error('Error in command <%d> (%d.name!r(%d.id) %d(%d.id) %d(%d.id) %d)',
-                                   context.command, context.guild, context.guild, context.channel, context.channel,
-                                   context.author, context.author, context.message.content)
+                logger.error('Error in command <%d> (%d.name!r(%d.id) %d(%d.id) %d(%d.id) %d)',
+                             context.command, context.guild, context.guild, context.channel, context.channel,
+                             context.author, context.author, context.message.content)
             else:
-                DOZER_LOGGER.error('Error in command <%d> (DM %d(%d.id) %d)', context.command,
-                                   context.channel.recipient,
-                                   context.channel.recipient, context.message.content)
-            DOZER_LOGGER.error(''.join(traceback.format_exception(type(exception), exception, exception.__traceback__)))
+                logger.error('Error in command <%d> (DM %d(%d.id) %d)', context.command,
+                             context.channel.recipient,
+                             context.channel.recipient, context.message.content)
+            logger.error(''.join(traceback.format_exception(type(exception), exception, exception.__traceback__)))
 
     async def on_error(self, event_method, *args, **kwargs):
         """Don't ignore the error, causing Sentry to capture it."""

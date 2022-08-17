@@ -14,7 +14,6 @@ from dozer.context import DozerContext
 from ._utils import *
 from .actionlogs import CustomJoinLeaveMessages
 from .. import db
-from ..bot import DOZER_LOGGER
 from ..db import *
 
 blurple = discord.Color.blurple()
@@ -109,7 +108,7 @@ class Roles(Cog):
                     elif payload.event_type == "REACTION_REMOVE":
                         await member.remove_roles(role, reason="Automatic Reaction Role")
                 except discord.Forbidden:
-                    DOZER_LOGGER.debug(f"Unable to add reaction role in guild {guild} due to missing permissions")
+                    logger.debug(f"Unable to add reaction role in guild {guild} due to missing permissions")
 
     async def removal_timer(self, record):
         """Asynchronous task that sleeps for a set time to remove a role from a member after a set period of time."""
@@ -134,7 +133,7 @@ class Roles(Cog):
         if self.normalize(old.name) != self.normalize(new.name):
             results = await GiveableRole.get_by(norm_name=self.normalize(old.name), guild_id=old.guild.id)
             if results:
-                DOZER_LOGGER.debug(f"Role {new.id} name updated. updating name")
+                logger.debug(f"Role {new.id} name updated. updating name")
                 await GiveableRole.from_role(new).update_or_add()
 
     @Cog.listener('on_guild_role_delete')
@@ -142,7 +141,7 @@ class Roles(Cog):
         """Deletes roles from database when the roles are deleted from the guild. """
         results = await GiveableRole.get_by(norm_name=self.normalize(old.name), guild_id=old.guild.id)
         if results:
-            DOZER_LOGGER.debug(f"Role {old.id} deleted. Deleting from database.")
+            logger.debug(f"Role {old.id} deleted. Deleting from database.")
             await GiveableRole.delete(role_id=old.id)
 
     @Cog.listener('on_member_join')
@@ -260,7 +259,7 @@ class Roles(Cog):
             try:
                 await msg.delete()
             except discord.HTTPException:
-                DOZER_LOGGER.debug(
+                logger.debug(
                     f"Unable to delete message to {ctx.member} in guild {ctx.guild} Reason: HTTPException")
             try:
                 await ctx.message.delete()
@@ -270,7 +269,7 @@ class Roles(Cog):
             try:
                 await msg.clear_reactions()
             except discord.HTTPException:
-                DOZER_LOGGER.debug(
+                logger.debug(
                     f"Unable to clear reactions from message to {ctx.member} in guild {ctx.guild} Reason: HTTPException")
             return
 
@@ -389,7 +388,7 @@ class Roles(Cog):
             try:
                 await msg.delete()
             except discord.HTTPException:
-                DOZER_LOGGER.debug(
+                logger.debug(
                     f"Unable to delete message to {ctx.member} in guild {ctx.guild} Reason: HTTPException")
             try:
                 await ctx.message.delete()
@@ -399,7 +398,7 @@ class Roles(Cog):
             try:
                 await msg.clear_reactions()
             except discord.HTTPException:
-                DOZER_LOGGER.debug(
+                logger.debug(
                     f"Unable to clear reactions from message to {ctx.member} in guild {ctx.guild} Reason: HTTPException")
             return
 

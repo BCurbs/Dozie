@@ -13,7 +13,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from fuzzywuzzy import fuzz
 
-from dozer.bot import DOZER_LOGGER
+from dozer.bot import logger
 from dozer.context import DozerContext
 from ._utils import *
 from .. import db
@@ -35,7 +35,7 @@ def keep_alive(func):
                 if isinstance(e, asyncio.CancelledError):
                     return
                 # panic to the console, and to chat
-                DOZER_LOGGER.error(traceback.format_exc())
+                logger.error(traceback.format_exc())
                 await ctx.send(f"```Error in game loop:\n{e.__class__.__name__}: {e}```")
 
     return wrapper
