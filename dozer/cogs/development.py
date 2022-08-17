@@ -1,8 +1,9 @@
 """Commands specific to development. Only approved developers can use these commands."""
 import copy
-import subprocess
 import logging
 import re
+import subprocess
+
 import discord
 import rstcloth
 from discord.ext.commands import NotOwner

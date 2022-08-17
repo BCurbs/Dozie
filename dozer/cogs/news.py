@@ -4,11 +4,11 @@ import logging
 import traceback
 from xml.etree import ElementTree
 from asyncio import CancelledError, InvalidStateError
+
 import aiohttp
 import discord
 from discord.ext import tasks
 from discord.ext.commands import guild_only, has_permissions, BadArgument
-
 
 from dozer.context import DozerContext
 from ._utils import *
@@ -81,8 +81,8 @@ class News(Cog):
 
                 if sub.data is None:
                     sub.data = 'source'
-
-                if sub.data not in channel_dict.keys():
+                keys = channel_dict.keys()
+                if sub.data not in keys:
                     channel_dict[sub.data] = {}
 
                 channel_dict[sub.data][channel] = sub.kind

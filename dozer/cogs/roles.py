@@ -2,6 +2,7 @@
 import asyncio
 import time
 import typing
+
 import discord
 import discord.utils
 from discord.ext import commands
@@ -24,8 +25,8 @@ class Roles(Cog):
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
-        for role_command in self.giveme.walk_commands():
-            @role_command.before_invoke
+        for command in self.giveme.walk_commands():
+            @command.before_invoke
             async def givemeautopurge(self, ctx: DozerContext):
                 """Before invoking a giveme command, run a purge"""
                 if await self.ctx_purge(ctx):

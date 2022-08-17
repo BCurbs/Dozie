@@ -1,6 +1,7 @@
 """Get new posts from any arbitrary subreddit"""
 import datetime
 import logging
+
 import aiohttp
 import discord
 

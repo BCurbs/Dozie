@@ -5,10 +5,11 @@ import gzip
 import pickle
 import traceback
 from collections import OrderedDict
+
 import discord
 import tbapi
-from discord.ext import commands
 from discord.utils import escape_markdown
+from discord.ext import commands
 from discord.ext.commands import has_permissions
 from fuzzywuzzy import fuzz
 

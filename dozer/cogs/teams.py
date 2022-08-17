@@ -1,5 +1,6 @@
 """Commands for making and seeing robotics team associations."""
 import json
+
 import discord
 from aiotba.http import AioTBAError
 from discord.ext.commands import BadArgument, guild_only, has_permissions
@@ -244,6 +245,8 @@ class AutoAssociation(db.DatabaseTable):
             obj = AutoAssociation(guild_id=result.get("guild_id"), team_on_join=result.get("team_on_join"))
             result_list.append(obj)
         return result_list
+
+
 
 
 def setup(bot):

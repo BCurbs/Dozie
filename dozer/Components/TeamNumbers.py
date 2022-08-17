@@ -11,14 +11,14 @@ class TeamNumbers(db.DatabaseTable):
         """Create the table in the database"""
         async with db.Pool.acquire() as conn:
             await conn.execute(f"""
-            CREATE TABLE IF NOT EXISTS {cls.__tablename__} (
+            CREATE TABLE {cls.__tablename__} (
             user_id bigint NOT NULL,
             team_number bigint NOT NULL,
             team_type VARCHAR NOT NULL,
             PRIMARY KEY (user_id, team_number, team_type)
             )""")
 
-    def __init__(self, user_id, team_number, team_type):
+    def __init__(self, user_id: int, team_number: int, team_type: str):
         super().__init__()
         self.user_id = user_id
         self.team_number = team_number
@@ -38,7 +38,7 @@ class TeamNumbers(db.DatabaseTable):
         async with db.Pool.acquire() as conn:
             statement = f"""
             INSERT INTO {self.__tablename__} ({", ".join(keys)})
-            VALUES({','.join(f'${i+1}' for i in range(len(values)))}) 
+            VALUES({','.join(f'${i + 1}' for i in range(len(values)))}) 
             """
             await conn.execute(statement, *values)
 

@@ -7,16 +7,17 @@ import logging
 import re
 import time
 import typing
+
 import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import BadArgument, has_permissions, RoleConverter, guild_only
 from discord.utils import escape_markdown
 
 from dozer.context import DozerContext
-from ..Components.CustomJoinLeaveMessages import send_log
 from ._utils import *
 from .general import blurple
 from .. import db
+from ..Components.CustomJoinLeaveMessages import send_log, CustomJoinLeaveMessages
 
 __all__ = ["SafeRoleConverter", "Moderation", "NewMemPurgeConfig", "GuildNewMember"]
 
@@ -53,7 +54,7 @@ class Moderation(Cog):
 
     async def nm_kick_internal(self, guild: discord.Guild = None):
         """Kicks people who have not done the new member process within a set amount of time."""
-        getLogger(__name__).debug("Starting nm_kick cycle...")
+        DOZER_LOGGER.debug("Starting nm_kick cycle...")
         if not guild:
             entries = await NewMemPurgeConfig.get_by()
         else:
@@ -76,9 +77,10 @@ class Moderation(Cog):
         """Kicks new members"""
         await self.nm_kick_internal()
 
-    async def mod_log(self, actor: discord.Member, action: str, target: Union[discord.User, discord.Member, None], reason, orig_channel=None,
-                      embed_color=discord.Color.red(), global_modlog=True, duration=None,
-                      dm=True, guild_override: int = None, extra_fields=None, updated_by: discord.Member = None):
+    async def mod_log(self, actor: discord.Member, action: str, target: Union[discord.User, discord.Member, None],
+                      reason, orig_channel=None,
+                      embed_color=discord.Color.red(), global_modlog: bool = True, duration: bool = None,
+                      dm: bool = True, guild_override: int = None, extra_fields=None, updated_by: discord.Member = None):
         """Generates a modlog embed"""
 
         if target is None:
@@ -103,7 +105,7 @@ class Moderation(Cog):
             for field in extra_fields:
                 modlog_embed.add_field(name=field['name'], value=field['value'], inline=field['inline'])
         if duration:
-            modlog_embed.add_field(name="Duration", value=duration)
+            modlog_embed.add_field(name="Duration", value=str(duration))
             modlog_embed.add_field(name="Expiration", value=f"<t:{round((datetime.datetime.now() + duration).timestamp())}:R>")
         if target is not None and dm:
             try:
@@ -145,6 +147,7 @@ class Moderation(Cog):
                     DOZER_LOGGER.error(
                         f"Failed to catch missing perms in {channel} ({channel.id}) Guild: {channel.guild.id}; Error: {e}")
 
+
     hm_regex = re.compile(r"((?P<years>\d+)y)?((?P<months>\d+)M)?((?P<weeks>\d+)w)?((?P<days>\d+)d)?((?P<hours>\d+)h)?((?P<minutes>\d+)m)?(("
                           r"?P<seconds>\d+)s)?")
 
@@ -172,12 +175,13 @@ class Moderation(Cog):
             orig_channel = self.bot.get_channel(r.orig_channel_id)
             punishment_type = r.type_of_punishment
             reason = r.reason or ""
-            seconds = max(int(r.target_ts - time.time()), 1)
-            self_inflicted = r.self_inflicted
+            seconds = max(int(r.target_ts - time.time()), 0.01)
             await PunishmentTimerRecords.delete(id=r.id)
-            self.bot.loop.create_task(self.punishment_timer(seconds, target, PunishmentTimerRecords.type_map[punishment_type], reason, actor,
-                                                            orig_channel, not self_inflicted))
-            DOZER_LOGGER.debug(f"Restarted {PunishmentTimerRecords.type_map[punishment_type].__name__} of {target} in {guild}")
+            self.bot.loop.create_task(
+                self.punishment_timer(seconds, target, PunishmentTimerRecords.type_map[punishment_type], reason, actor,
+                                      orig_channel))
+            getLogger('dozer').info(
+                f"Restarted {PunishmentTimerRecords.type_map[punishment_type].__name__} of {target} in {guild}")
 
     async def restart_all_timers(self):
         """Restarts all timers"""
@@ -316,10 +320,10 @@ class Moderation(Cog):
         results = await Mute.get_by(guild_id=member.guild.id, member_id=member.id)
         if results:
             await Mute.delete(member_id=member.id, guild_id=member.guild.id)
-            await PunishmentTimerRecords.delete(target_id=member.id, guild_id=member.guild.id, type_of_punishment=Mute.type)
+            await PunishmentTimerRecords.delete(target_id=member.id, guild_id=member.guild.id,
+                                                type_of_punishment=Mute.type)
+            await self.perm_override(member, send_messages=None, add_reactions=None, speak=None)
             await self.restart_all_timers()
-
-            await self.perm_override(member, send_messages=None, add_reactions=None, speak=None, stream=None)
             return True
         else:
             return False  # member not muted
@@ -369,7 +373,8 @@ class Moderation(Cog):
         results = await Deafen.get_by(guild_id=member.guild.id, member_id=member.id)
         if results:
             await self.perm_override(member=member, read_messages=None)
-            await PunishmentTimerRecords.delete(target_id=member.id, guild_id=member.guild.id, type_of_punishment=Deafen.type)
+            await PunishmentTimerRecords.delete(target_id=member.id, guild_id=member.guild.id,
+                                                type_of_punishment=Deafen.type)
             await self.restart_all_timers()
             await Deafen.delete(member_id=member.id, guild_id=member.guild.id)
             truths = [True, results[0].self_inflicted]
@@ -437,8 +442,11 @@ class Moderation(Cog):
                     await message.reply(f"You must set a team number first. ex: `{ctx.prefix}setteam frc 0`")
                     return
 
+            custom_log_config = await CustomJoinLeaveMessages.get_by(guild_id=message.guild.id)
+
             await message.author.add_roles(message.guild.get_role(role_id))
-            await send_log(member=message.author)
+            if custom_log_config[0].send_on_verify:
+                await send_log(member=message.author)
 
     @Cog.listener('on_message_edit')
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
@@ -569,7 +577,7 @@ class Moderation(Cog):
                         punishment.type_of_punishment == 2 and punishment.target_id in self_inflicted]
         mutes = [punishment for punishment in punishments if punishment.type_of_punishment == 1]
         embed = discord.Embed(title=f"Active punishments in {ctx.guild}", color=blurple)
-        embed.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
+        embed.set_footer(text='Triggered by ' + ctx.author.display_name)
 
         def get_mention(target_id):
             member = ctx.guild.get_member(target_id)
@@ -721,7 +729,6 @@ class Moderation(Cog):
     @discord.ext.commands.cooldown(rate=10, per=2,
                                    type=discord.ext.commands.BucketType.guild)  # 10 seconds per 2 members in the guild
     async def selfdeafen(self, ctx: DozerContext, *, reason: str = "No reason provided"):
-
         """Deafen yourself for a given time period to prevent you from reading or sending messages; useful as a study tool."""
         async with ctx.typing():
             seconds = self.hm_to_seconds(reason)
@@ -820,7 +827,10 @@ class Moderation(Cog):
                 return
 
             await member.add_roles(role)
-            await send_log(member=member)
+
+            custom_join_config = await CustomJoinLeaveMessages.get_by(guild_id=member.guild.id)
+            if custom_join_config[0].send_on_verify:
+                await send_log(member=member)
             await ctx.send(f"Member verified on request of {ctx.author.display_name}")
 
     @command()
@@ -935,9 +945,10 @@ class Moderation(Cog):
                             value='\n'.join(f"{self.bot.get_guild(sub_id.subscription_id)} | {sub_id.subscription_id}"
                                             for sub_id in target_ids) or 'None', inline=False)
         for field_number, target_ids in enumerate(chunk(subscribers, 10)):
-            embed.add_field(name='Subscribers', value='\n'.join(f"{self.bot.get_guild(sub_id.subscriber_id)} | {sub_id.subscriber_id}"
-                                                                for sub_id in target_ids) or 'None', inline=False)
-        embed.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
+            embed.add_field(name='Subscribers',
+                            value='\n'.join(f"{self.bot.get_guild(sub_id.subscriber_id)} | {sub_id.subscriber_id}"
+                                            for sub_id in target_ids) or 'None', inline=False)
+        embed.set_footer(text='Triggered by ' + ctx.author.display_name)
 
         await ctx.send(embed=embed)
 
@@ -956,7 +967,7 @@ class Moderation(Cog):
             embed = discord.Embed(title='Success!',
                                   description=f"**{ctx.guild}** is now subscribed to receive crossbans from **{guild}**",
                                   color=blurple)
-            embed.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
+            embed.set_footer(text='Triggered by ' + ctx.author.display_name)
             await ctx.send(embed=embed)
         else:
             raise BadArgument("Dozer could not find that guild! Make sure that dozer is in that guild!")
@@ -975,7 +986,7 @@ class Moderation(Cog):
             embed = discord.Embed(title='Success!',
                                   description=f"**{ctx.guild}** is no longer subscribed to receive crossbans from **{guild}**",
                                   color=blurple)
-            embed.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
+            embed.set_footer(text='Triggered by ' + ctx.author.display_name)
             await ctx.send(embed=embed)
         else:
             raise BadArgument("Dozer could not find a subscription to that guild!")
@@ -1216,7 +1227,8 @@ class GuildNewMember(db.DatabaseTable):
             require_team bool NOT NULL DEFAULT false
             )""")
 
-    def __init__(self, guild_id, channel_id, role_id, message, require_team):
+
+    def __init__(self, guild_id: int, channel_id: int, role_id: int, message: str, require_team: bool):
         super().__init__()
         self.guild_id = guild_id
         self.channel_id = channel_id
@@ -1298,7 +1310,7 @@ class PunishmentTimerRecords(db.DatabaseTable):
             )""")
 
     def __init__(self, guild_id: int, actor_id: int, target_id: int, type_of_punishment: int, target_ts: int,
-                 orig_channel_id: int=None, reason: str=None, input_id: int=None, self_inflicted: bool=False):
+                 orig_channel_id: int = None, reason: str = None, input_id: int = None, self_inflicted: bool =False):
         super().__init__()
         self.id = input_id
         self.guild_id = guild_id

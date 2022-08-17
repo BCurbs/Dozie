@@ -1,7 +1,6 @@
 """A series of commands that talk to The Blue Alliance."""
 
 import datetime
-
 import io
 import itertools
 import json

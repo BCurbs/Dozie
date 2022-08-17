@@ -1,9 +1,11 @@
 """Bot object for Dozer"""
+
 import logging
 import re
 import sys
 import traceback
 from typing import Pattern
+
 import discord
 from discord.ext import commands
 from discord_slash import SlashCommand

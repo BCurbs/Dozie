@@ -1,6 +1,7 @@
 """Provides database storage for the Dozer Discord bot"""
 import logging
 from typing import List, Dict
+
 import asyncpg
 
 DOZER_LOGGER = logging.getLogger(__name__)

@@ -1,8 +1,6 @@
 """Records members' XP and level."""
 
 import functools
-
-
 import itertools
 import logging
 import math
@@ -10,6 +8,7 @@ import random
 import typing
 from datetime import timedelta, timezone, datetime
 import asyncio
+
 import aiohttp
 import discord
 from discord.utils import escape_markdown
@@ -122,20 +121,22 @@ class Levels(Cog):
             # Determine if we should add all roles or just top role
             to_add = to_do if guild_settings.keep_old_roles or not len(to_do) else [to_do[-1]]
 
-            for level_role in to_add:  # Go through all roles that should be added and see if the member already has those roles
+            for level_role in to_add:
+                # Go through all roles that should be added and see if the member already has those roles
                 add_role = guild.get_role(level_role.role_id)
                 if add_role not in member.roles:
                     add_roles.append(add_role)
 
             if not guild_settings.keep_old_roles:  # Check if a guild wants all old roles removed
-                for level_role in to_do[:-1]:  # Go through all roles that should be removed and make sure the member
-                    # already has those roles
+
+                # Go through all roles that should be removed and make sure the member already has those roles
+                for level_role in to_do[:-1]:
                     del_role = guild.get_role(level_role.role_id)
                     if del_role in member.roles:
                         del_roles.append(del_role)
 
-            for level_role in to_undo:  # Go through all roles the member shouldn't have, and make sure they don't
-                # have them
+            # Go through all roles the member shouldn't have, and make sure the member doesn't have them
+            for level_role in to_undo:
                 del_role = guild.get_role(level_role.role_id)
                 if del_role in member.roles:
                     del_roles.append(del_role)
@@ -209,12 +210,13 @@ class Levels(Cog):
         # Query written manually to insert all records at once
         try:
             async with db.Pool.acquire() as conn:
-                await conn.executemany(f"INSERT INTO {MemberXP.__tablename__} "
-                                       f"(guild_id, user_id, total_xp, total_messages, last_given_at)"
-                                       f" VALUES ($1, $2, $3, $4, $5) ON CONFLICT ({MemberXP.__uniques__}) DO UPDATE"
-                                       f" SET total_xp = EXCLUDED.total_xp, total_messages = EXCLUDED.total_messages, "
-                                       f"last_given_at = EXCLUDED.last_given_at",
-                                       to_write)
+                await conn.executemany(
+                    f"INSERT INTO {MemberXP.__tablename__} "
+                    f"(guild_id, user_id, total_xp, total_messages, last_given_at)"
+                    f" VALUES ($1, $2, $3, $4, $5) ON CONFLICT ({MemberXP.__uniques__}) DO UPDATE"
+                    f" SET total_xp = EXCLUDED.total_xp, total_messages = EXCLUDED.total_messages, "
+                    f"last_given_at = EXCLUDED.last_given_at",
+                    to_write)
             DOZER_LOGGER.debug(f"Inserted/updated {len(to_write)} record(s); Evicted {evicted} records(s)")
         except Exception as e:
             DOZER_LOGGER.error(f"Failed to sync levels cache to db, Reason:{e}")
@@ -453,7 +455,7 @@ class Levels(Cog):
         settings = self.guild_settings.get(ctx.guild.id)
         if settings:
             embed = discord.Embed(color=blurple)
-            embed.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
+            embed.set_footer(text='Triggered by ' + ctx.author.display_name)
 
             notify_channel = ctx.guild.get_channel(settings.lvl_up_msgs)
 
@@ -627,7 +629,7 @@ class Levels(Cog):
             lvl_up_msgs = ctx.guild.get_channel(ent.lvl_up_msgs)
             embed = discord.Embed(color=blurple)
             embed.set_author(name=ctx.guild, icon_url=ctx.guild.icon_url)
-            embed.set_footer(text='Triggered by ' + escape_markdown(ctx.author.display_name))
+            embed.set_footer(text='Triggered by ' + ctx.author.display_name)
             enabled = "Enabled" if ent.enabled else "Disabled"
             embed.add_field(name=f"Levels are {enabled} for {ctx.guild}", value=f"XP min: {ent.xp_min}\n"
                                                                                 f"XP max: {ent.xp_max}\n"
@@ -681,9 +683,11 @@ class Levels(Cog):
             else:
                 rank = count
 
-            embed.description = (f"Level {level}, {total_xp - level_floor}/{level_xp} XP to level up ({total_xp} total)\n"
-                                 f"#{rank} of {count} in this server")
-        embed.set_author(name=escape_markdown(member.display_name), icon_url=member.avatar_url_as(format='png', size=64))
+            embed.description = (
+                f"Level {level}, {total_xp - level_floor}/{level_xp} XP to level up ({total_xp} total)\n"
+                f"#{rank} of {count} in this server")
+        embed.set_author(name=escape_markdown(member.display_name),
+                         icon_url=member.avatar_url_as(format='png', size=64))
         await ctx.send(embed=embed)
 
     rank.example_usage = """
